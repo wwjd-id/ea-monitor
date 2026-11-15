@@ -137,6 +137,11 @@ function isDemo(a){
   if(a.demo === true || a.demo === false) return a.demo;
   return /demo|contest/i.test(String(a.server || "") + " " + String(a.label || ""));   // data dari EA versi lama
 }
+function ddNow(fl, eq){            // DD sekarang = floating minus dibagi equity
+  fl = Number(fl); eq = Number(eq);
+  if(!(fl < 0) || !(eq > 0)) return 0;
+  return -fl / eq * 100;
+}
 function cur(a){ return String(a.currency || "").toUpperCase(); }
 
 async function listFiles(t, force){
@@ -211,6 +216,7 @@ function general(list, nowSec){
   g.appendChild(cell("Equity", num(eq)));
   g.appendChild(cell("Floating", num(fl), sign(fl)));
   box.appendChild(g);
+  box.appendChild(el("div", "other", "DD sekarang (floating ÷ equity): " + num(ddNow(fl, eq), 1) + "%"));
   Object.keys(other).sort().forEach(function(c){
     box.appendChild(el("div", "other", "Tidak dijumlahkan ke USD — " + c + " (" + other[c].n + " akun): balance " + num(other[c].bal) +
                                        " · equity " + num(other[c].eq) + " · floating " + num(other[c].fl)));
@@ -236,11 +242,14 @@ function account(a, nowSec){
   nm.appendChild(bd);
   idb.appendChild(nm);
   idb.appendChild(el("div", "broker", String(a.broker || a.server || "").toUpperCase() + (stale ? "  ·  TIDAK ADA KABAR" : "")));
+  var who = [a.name, a.login ? "#" + a.login : ""].filter(Boolean).join(" · ");
+  if(who) idb.appendChild(el("div", "broker", who));
   sum.appendChild(idb);
   var nums = el("div", "nums");
   nums.appendChild(cell("Balance", num(a.balance)));
   nums.appendChild(cell("Equity", num(a.equity)));
-  nums.appendChild(cell("Floating", num(a.floating), sign(a.floating)));
+  var ddp = ddNow(a.floating, a.equity);
+  nums.appendChild(cell("Floating", num(a.floating) + (ddp > 0 ? "  (" + num(ddp, 1) + "%)" : ""), sign(a.floating)));
   sum.appendChild(nums);
   sum.appendChild(el("span", "caret", "▶"));
   det.appendChild(sum);
@@ -249,6 +258,7 @@ function account(a, nowSec){
   var body = el("div", "body");
   var tb = el("table", "kv");
   kvRow(tb, "EA", (a.eas && a.eas.length) ? a.eas.join(", ") : "-", "warn");
+  kvRow(tb, "DD sekarang (floating ÷ equity)", num(ddp, 1) + "%", ddp > 0 ? "down" : "");
   kvRow(tb, "DD maks (balance)", num(a.dd_bal) + "  (" + num(a.dd_bal_pct, 1) + "%)", Number(a.dd_bal) > 0 ? "down" : "");
   kvRow(tb, "DD maks (equity)", num(a.dd_eq) + "  (" + num(a.dd_eq_pct, 1) + "%)", Number(a.dd_eq) > 0 ? "down" : "");
   var hasPf = !(a.profit_factor === null || a.profit_factor === undefined);
@@ -257,8 +267,9 @@ function account(a, nowSec){
   kvRow(tb, "Trade tertutup", (a.trades || 0) + wr);
   kvRow(tb, "Profit bersih", num(a.net_profit), sign(a.net_profit));
   kvRow(tb, "Margin level", Number(a.margin) > 0 ? num(a.margin_level, 0) + "%" : "-");
-  var srv = [a.server, a.login ? "#" + a.login : ""].filter(Boolean).join(" · ");
-  if(srv) kvRow(tb, "Server", srv);
+  if(a.name) kvRow(tb, "Pemilik akun", a.name);
+  if(a.login) kvRow(tb, "Nomor akun", String(a.login));
+  if(a.server) kvRow(tb, "Server", a.server);
   body.appendChild(tb);
 
   var pos = a.positions || [];
