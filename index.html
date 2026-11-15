@@ -16,6 +16,7 @@
   h1{margin:0;font-size:20px;letter-spacing:.3px}
   h1 span{color:var(--cyan)}
   #meta{color:var(--dim);font-size:12.5px;margin-top:3px}
+  #relist{margin-top:8px;background:transparent;color:var(--cyan);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer}
   main{padding:8px 12px 40px;max-width:1100px;margin:0 auto}
   .up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)} .dim{color:var(--dim)}
   .k{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
@@ -73,6 +74,7 @@
 <header>
   <h1>EA <span>Monitor</span></h1>
   <div id="meta">Memuat...</div>
+  <button id="relist" type="button">Perbarui daftar akun</button>
 </header>
 <main>
   <div id="msg" hidden></div>
@@ -83,7 +85,8 @@
 
 <script>
 // Kosongkan user/repo untuk dideteksi otomatis dari alamat USERNAME.github.io/REPO/
-var CFG = { user: "", repo: "", branch: "data", refreshSec: 120, staleMin: 15 };
+// files: daftar nama file manual (cadangan), mis. ["hfm-cent.json","xm-micro.json"]
+var CFG = { user: "", repo: "", branch: "data", refreshSec: 120, staleMin: 15, listTtlMin: 60, files: [] };
 // Pembagi ke USD untuk mata uang sen. Mata uang lain (mis. IDR) tidak dijumlahkan ke TOTAL USD.
 var TO_USD = { "USD": 1, "USC": 100 };
 var OPEN = {};
@@ -136,8 +139,13 @@ function isDemo(a){
 }
 function cur(a){ return String(a.currency || "").toUpperCase(); }
 
-async function listFiles(t){
+async function listFiles(t, force){
   var key = "mjmon:" + t.u + "/" + t.r;
+  var c = store(key);
+  if(Array.isArray(c)) c = { names: c, at: 0 };          // format cache versi lama
+  var have = c && c.names && c.names.length;
+  // Daftar file hanya diminta ke GitHub sesekali; GitHub membatasi 60 permintaan per jam per alamat internet.
+  if(!force && have && Date.now() - c.at < CFG.listTtlMin * 60000) return { names: c.names, note: "" };
   try{
     var res = await fetch("https://api.github.com/repos/" + t.u + "/" + t.r + "/contents?ref=" + encodeURIComponent(t.b),
                           { headers: { "Accept": "application/vnd.github+json" } });
@@ -145,11 +153,13 @@ async function listFiles(t){
     var arr = await res.json();
     var names = arr.filter(function(f){ return f.type === "file" && /\.json$/i.test(f.name); })
                    .map(function(f){ return f.name; });
-    store(key, names);
+    store(key, { names: names, at: Date.now() });
     return { names: names, note: "" };
   }catch(e){
-    var cached = store(key);
-    if(cached && cached.length) return { names: cached, note: "Daftar akun dari cache (" + e.message + ")" };
+    if(have) return { names: c.names, note: force ? "Daftar akun belum bisa diperbarui (" + e.message + "). Data akun tetap dimuat; coba lagi nanti." : "" };
+    var q = new URLSearchParams(location.search).get("files");
+    var manual = q ? q.split(",") : CFG.files;
+    if(manual && manual.length) return { names: manual.map(function(n){ n = n.trim(); return /\.json$/i.test(n) ? n : n + ".json"; }), note: "" };
     throw e;
   }
 }
@@ -281,7 +291,7 @@ function account(a, nowSec){
   return det;
 }
 
-async function load(){
+async function load(force){
   var t = target();
   var msg = document.getElementById("msg"), meta = document.getElementById("meta");
   if(!t.u || !t.r){
@@ -290,7 +300,7 @@ async function load(){
     return;
   }
   try{
-    var lf = await listFiles(t);
+    var lf = await listFiles(t, force === true);
     var data = (await Promise.all(lf.names.map(function(n){ return getOne(t, n); }))).filter(Boolean);
     data.sort(function(a, b){
       var d = (isDemo(a) ? 1 : 0) - (isDemo(b) ? 1 : 0);
@@ -308,12 +318,13 @@ async function load(){
                        " · muat ulang tiap " + CFG.refreshSec + " detik";
   }catch(e){
     msg.hidden = false;
-    msg.textContent = "Gagal memuat daftar akun (" + e.message + "). Cek nama repository dan branch '" + t.b + "'.";
+    msg.textContent = e.message === "HTTP 403" ? "GitHub sedang membatasi permintaan dari alamat internet ini (HTTP 403). Coba lagi dalam satu jam, atau buka dari jaringan lain." : "Gagal memuat daftar akun (" + e.message + "). Cek nama repository dan branch '" + t.b + "'.";
     meta.textContent = "Gagal memuat";
   }
 }
 load();
-setInterval(load, CFG.refreshSec * 1000);
+setInterval(function(){ load(false); }, CFG.refreshSec * 1000);
+document.getElementById("relist").addEventListener("click", function(){ load(true); });
 </script>
 </body>
 </html>
