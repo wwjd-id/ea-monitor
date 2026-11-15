@@ -1,0 +1,30 @@
+name: Perbarui daftar akun
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  daftar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: data
+      - run: |
+          python3 -c "import glob,json; print(json.dumps(sorted(f for f in glob.glob('*.json') if not f.startswith('_'))))" > _index.new
+          if cmp -s _index.new _index.json; then
+            rm _index.new
+            echo "Daftar tidak berubah."
+          else
+            mv _index.new _index.json
+            git config user.name "ea-monitor"
+            git config user.email "ea-monitor@users.noreply.github.com"
+            git add _index.json
+            git commit -m "perbarui daftar akun"
+            git push origin HEAD:data || (git pull --rebase origin data && git push origin HEAD:data)
+          fi
