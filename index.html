@@ -144,27 +144,47 @@ function ddNow(fl, eq){            // DD sekarang = floating minus dibagi equity
 }
 function cur(a){ return String(a.currency || "").toUpperCase(); }
 
+function okName(n){ return /\.json$/i.test(n) && n.charAt(0) !== "_"; }
+function union(){
+  var seen = {}, out = [];
+  for(var i = 0; i < arguments.length; i++){
+    (arguments[i] || []).forEach(function(n){ n = String(n).trim(); if(n && !/\.json$/i.test(n)) n += ".json"; if(okName(n) && !seen[n]){ seen[n] = 1; out.push(n); } });
+  }
+  return out;
+}
 async function listFiles(t, force){
   var key = "mjmon:" + t.u + "/" + t.r;
   var c = store(key);
   if(Array.isArray(c)) c = { names: c, at: 0 };          // format cache versi lama
-  var have = c && c.names && c.names.length;
-  // Daftar file hanya diminta ke GitHub sesekali; GitHub membatasi 60 permintaan per jam per alamat internet.
-  if(!force && have && Date.now() - c.at < CFG.listTtlMin * 60000) return { names: c.names, note: "" };
+  if(!c || !c.names) c = { names: [], at: 0 };
+  var q = new URLSearchParams(location.search).get("files");
+  var manual = q ? q.split(",") : CFG.files;
+
+  // 1) _index.json di branch data (dibuat otomatis oleh GitHub Actions). Tidak terkena batas 60 permintaan/jam.
+  var idx = [];
+  try{
+    var r1 = await fetch("https://raw.githubusercontent.com/" + t.u + "/" + t.r + "/" + t.b + "/_index.json?t=" + Date.now(), { cache: "no-store" });
+    if(r1.ok){ var a1 = await r1.json(); if(Array.isArray(a1)) idx = a1; }
+  }catch(e){}
+  if(idx.length){
+    var n1 = union(idx, c.names, manual);
+    store(key, { names: n1, at: c.at });
+    return { names: n1, note: "" };
+  }
+
+  // 2) Cadangan: tanya daftar file ke GitHub API, paling sering sekali per jam.
+  if(!force && c.names.length && Date.now() - c.at < CFG.listTtlMin * 60000) return { names: union(c.names, manual), note: "" };
   try{
     var res = await fetch("https://api.github.com/repos/" + t.u + "/" + t.r + "/contents?ref=" + encodeURIComponent(t.b),
                           { headers: { "Accept": "application/vnd.github+json" } });
     if(!res.ok) throw new Error("HTTP " + res.status);
     var arr = await res.json();
-    var names = arr.filter(function(f){ return f.type === "file" && /\.json$/i.test(f.name); })
-                   .map(function(f){ return f.name; });
+    var names = union(arr.filter(function(f){ return f.type === "file"; }).map(function(f){ return f.name; }), manual);
     store(key, { names: names, at: Date.now() });
     return { names: names, note: "" };
   }catch(e){
-    if(have) return { names: c.names, note: force ? "Daftar akun belum bisa diperbarui (" + e.message + "). Data akun tetap dimuat; coba lagi nanti." : "" };
-    var q = new URLSearchParams(location.search).get("files");
-    var manual = q ? q.split(",") : CFG.files;
-    if(manual && manual.length) return { names: manual.map(function(n){ n = n.trim(); return /\.json$/i.test(n) ? n : n + ".json"; }), note: "" };
+    var have = union(c.names, manual);
+    if(have.length) return { names: have, note: force ? "Daftar akun belum bisa diperbarui (" + e.message + "). Data akun tetap dimuat. Akun baru muncul setelah daftar otomatis (_index.json) diperbarui." : "" };
     throw e;
   }
 }
