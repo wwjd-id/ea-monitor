@@ -1,0 +1,24 @@
+name: Bersihkan riwayat data
+
+on:
+  schedule:
+    - cron: '0 20 * * 6'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bersih:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: data
+      - run: |
+          git config user.name "ea-monitor"
+          git config user.email "ea-monitor@users.noreply.github.com"
+          git checkout --orphan bersih
+          git add -A
+          git commit -m "reset riwayat data"
+          git push --force origin bersih:data
