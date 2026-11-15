@@ -12,40 +12,61 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-  header{padding:18px 16px 10px;border-bottom:1px solid var(--line)}
+  header{padding:16px 16px 8px}
   h1{margin:0;font-size:20px;letter-spacing:.3px}
   h1 span{color:var(--cyan)}
-  #meta{color:var(--dim);font-size:13px;margin-top:4px}
-  main{padding:14px 12px 40px;max-width:1280px;margin:0 auto}
-  .totals{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:14px}
-  .tot{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-  .tot h3{margin:0 0 6px;font-size:13px;color:var(--cyan);font-weight:600}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
-  .card.stale{border-color:var(--warn)}
-  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-  .name{font-size:17px;font-weight:700;word-break:break-word}
-  .badge{font-size:11px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--cyan);white-space:nowrap}
-  .sub{color:var(--dim);font-size:12.5px;margin-top:2px;word-break:break-word}
-  .eas{margin-top:6px;font-size:13px}
-  .eas b{color:var(--warn);font-weight:600}
-  .big{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0 4px}
-  .big div{background:#0a0c0e;border:1px solid var(--line);border-radius:8px;padding:8px}
-  .k{color:var(--dim);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
-  .v{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;word-break:break-word}
-  table.kv{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}
+  #meta{color:var(--dim);font-size:12.5px;margin-top:3px}
+  main{padding:8px 12px 40px;max-width:1100px;margin:0 auto}
+  .up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)} .dim{color:var(--dim)}
+  .k{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  .v{font-weight:700;font-variant-numeric:tabular-nums;word-break:break-word}
+
+  /* GENERAL */
+  .general{background:var(--card);border:1px solid var(--cyan);border-radius:12px;padding:14px;margin-bottom:14px}
+  .general h2{margin:0 0 2px;font-size:13px;color:var(--cyan);letter-spacing:.8px}
+  .general .sub{color:var(--dim);font-size:12.5px}
+  .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  .g3 .v{font-size:19px}
+  .other{margin-top:10px;font-size:12.5px;color:var(--dim)}
+
+  /* LIST */
+  .listhead{color:var(--dim);font-size:12px;margin:0 2px 6px}
+  details.acc{background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;overflow:hidden}
+  details.acc.stale{border-color:var(--warn)}
+  details.acc[open]{border-color:#3a424b}
+  details.acc>summary{list-style:none;cursor:pointer;padding:11px 12px;display:grid;gap:6px 12px;
+    grid-template-columns:1fr auto;grid-template-areas:"id caret" "nums nums";align-items:center}
+  details.acc>summary::-webkit-details-marker{display:none}
+  .id{grid-area:id;min-width:0}
+  .name{font-size:15.5px;font-weight:700;word-break:break-word}
+  .broker{color:var(--dim);font-size:12px;letter-spacing:.4px;word-break:break-word}
+  .badges{display:inline-flex;gap:5px;flex-wrap:wrap;margin-left:6px;vertical-align:middle}
+  .badge{font-size:10.5px;font-weight:600;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--cyan);white-space:nowrap}
+  .badge.type{color:#000;background:var(--cyan);border-color:var(--cyan)}
+  .badge.demo{color:#000;background:var(--warn);border-color:var(--warn)}
+  .caret{grid-area:caret;color:var(--dim);font-size:13px;transition:transform .15s}
+  details.acc[open] .caret{transform:rotate(90deg)}
+  .nums{grid-area:nums;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .nums .v{font-size:14.5px}
+  .body{border-top:1px solid var(--line);padding:10px 12px 12px}
+  table.kv{width:100%;border-collapse:collapse;font-size:13.5px}
   table.kv td{padding:4px 0;border-bottom:1px solid #191d22;font-variant-numeric:tabular-nums}
   table.kv td:last-child{text-align:right;font-weight:600}
-  .up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)} .dim{color:var(--dim)}
-  details{margin-top:10px}
-  summary{cursor:pointer;color:var(--cyan);font-size:13.5px}
+  .ptitle{margin:12px 0 4px;font-size:13px;color:var(--cyan)}
   .scroll{overflow-x:auto}
-  table.pos{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px;min-width:420px}
+  table.pos{width:100%;border-collapse:collapse;font-size:12.5px;min-width:440px}
   table.pos th,table.pos td{padding:4px 6px;border-bottom:1px solid #191d22;text-align:right;white-space:nowrap}
   table.pos th:first-child,table.pos td:first-child{text-align:left}
   table.pos th{color:var(--dim);font-weight:500}
   .foot{color:var(--dim);font-size:12px;margin-top:10px}
-  #msg{padding:14px;color:var(--warn);font-size:14px}
+  #msg{padding:12px;color:var(--warn);font-size:14px}
+
+  @media (min-width:760px){
+    details.acc>summary{grid-template-columns:minmax(0,1.3fr) minmax(0,1.5fr) auto;grid-template-areas:"id nums caret"}
+    .nums .v{font-size:15.5px;text-align:right}
+    .nums .k{text-align:right}
+    .g3 .v{font-size:24px}
+  }
 </style>
 </head>
 <body>
@@ -55,13 +76,17 @@
 </header>
 <main>
   <div id="msg" hidden></div>
-  <div class="totals" id="totals"></div>
-  <div class="grid" id="grid"></div>
+  <section class="general" id="general" hidden></section>
+  <div class="listhead" id="listhead"></div>
+  <div id="list"></div>
 </main>
 
 <script>
-// Kosongkan untuk dideteksi otomatis dari alamat USERNAME.github.io/REPO/
+// Kosongkan user/repo untuk dideteksi otomatis dari alamat USERNAME.github.io/REPO/
 var CFG = { user: "", repo: "", branch: "data", refreshSec: 120, staleMin: 15 };
+// Pembagi ke USD untuk mata uang sen. Mata uang lain (mis. IDR) tidak dijumlahkan ke TOTAL USD.
+var TO_USD = { "USD": 1, "USC": 100 };
+var OPEN = {};
 
 function target(){
   var q = new URLSearchParams(location.search);
@@ -74,7 +99,6 @@ function target(){
   }
   return { u: u, r: r, b: q.get("branch") || CFG.branch };
 }
-
 function el(tag, cls, text){
   var e = document.createElement(tag);
   if(cls) e.className = cls;
@@ -106,6 +130,11 @@ function store(key, val){
   }catch(e){}
   return null;
 }
+function isDemo(a){
+  if(a.demo === true || a.demo === false) return a.demo;
+  return /demo|contest/i.test(String(a.server || "") + " " + String(a.label || ""));   // data dari EA versi lama
+}
+function cur(a){ return String(a.currency || "").toUpperCase(); }
 
 async function listFiles(t){
   var key = "mjmon:" + t.u + "/" + t.r;
@@ -139,55 +168,91 @@ function kvRow(tb, k, v, cls){
   tr.appendChild(el("td", cls || "", v));
   tb.appendChild(tr);
 }
+function cell(k, v, cls){
+  var d = el("div");
+  d.appendChild(el("div", "k", k));
+  d.appendChild(el("div", "v " + (cls || ""), v));
+  return d;
+}
 
-function card(a, nowSec){
+function general(list, nowSec){
+  var box = document.getElementById("general");
+  box.textContent = "";
+  box.hidden = false;
+  var real = list.filter(function(a){ return !isDemo(a); });
+  var demo = list.length - real.length;
+  var bal = 0, eq = 0, fl = 0, counted = 0, other = {};
+  real.forEach(function(a){
+    var div = TO_USD[cur(a)];
+    if(div){
+      bal += (Number(a.balance) || 0) / div; eq += (Number(a.equity) || 0) / div; fl += (Number(a.floating) || 0) / div; counted++;
+    }else{
+      var c = cur(a) || "?";
+      if(!other[c]) other[c] = { n: 0, bal: 0, eq: 0, fl: 0 };
+      other[c].n++; other[c].bal += Number(a.balance) || 0; other[c].eq += Number(a.equity) || 0; other[c].fl += Number(a.floating) || 0;
+    }
+  });
+  var stale = list.filter(function(a){ return nowSec - Number(a.updated || 0) > CFG.staleMin * 60; }).length;
+  box.appendChild(el("h2", "", "GENERAL · TOTAL USD"));
+  box.appendChild(el("div", "sub", counted + " akun real dijumlahkan · " + demo + " akun demo tidak dihitung" +
+                                   (stale ? " · " + stale + " akun tidak ada kabar" : "")));
+  var g = el("div", "g3");
+  g.appendChild(cell("Balance", num(bal)));
+  g.appendChild(cell("Equity", num(eq)));
+  g.appendChild(cell("Floating", num(fl), sign(fl)));
+  box.appendChild(g);
+  Object.keys(other).sort().forEach(function(c){
+    box.appendChild(el("div", "other", "Tidak dijumlahkan ke USD — " + c + " (" + other[c].n + " akun): balance " + num(other[c].bal) +
+                                       " · equity " + num(other[c].eq) + " · floating " + num(other[c].fl)));
+  });
+}
+
+function account(a, nowSec){
+  var id = String(a.id || a.label || "");
   var age = nowSec - Number(a.updated || 0);
   var stale = age > CFG.staleMin * 60;
-  var cur = a.currency || "";
-  var c = el("div", "card" + (stale ? " stale" : ""));
+  var det = el("details", "acc" + (stale ? " stale" : ""));
+  if(OPEN[id]) det.open = true;
+  det.addEventListener("toggle", function(){ OPEN[id] = det.open; });
 
-  var top = el("div", "top");
-  var left = el("div");
-  left.appendChild(el("div", "name", a.label || a.id || "akun"));
-  var sub = [a.broker, a.server].filter(Boolean).join(" · ");
-  if(a.login) sub += " · #" + a.login;
-  left.appendChild(el("div", "sub", sub));
-  top.appendChild(left);
-  top.appendChild(el("span", "badge", (a.platform || "MT") + (cur ? " · " + cur : "")));
-  c.appendChild(top);
+  // baris ringkas
+  var sum = el("summary");
+  var idb = el("div", "id");
+  var nm = el("div", "name", a.label || id || "akun");
+  var bd = el("span", "badges");
+  if(a.type) bd.appendChild(el("span", "badge type", String(a.type).toUpperCase()));
+  if(isDemo(a)) bd.appendChild(el("span", "badge demo", "DEMO"));
+  bd.appendChild(el("span", "badge", (a.platform || "MT") + (cur(a) ? " · " + cur(a) : "")));
+  nm.appendChild(bd);
+  idb.appendChild(nm);
+  idb.appendChild(el("div", "broker", String(a.broker || a.server || "").toUpperCase() + (stale ? "  ·  TIDAK ADA KABAR" : "")));
+  sum.appendChild(idb);
+  var nums = el("div", "nums");
+  nums.appendChild(cell("Balance", num(a.balance)));
+  nums.appendChild(cell("Equity", num(a.equity)));
+  nums.appendChild(cell("Floating", num(a.floating), sign(a.floating)));
+  sum.appendChild(nums);
+  sum.appendChild(el("span", "caret", "▶"));
+  det.appendChild(sum);
 
-  var eas = el("div", "eas");
-  eas.appendChild(el("span", "dim", "EA: "));
-  eas.appendChild(el("b", "", (a.eas && a.eas.length) ? a.eas.join(", ") : "-"));
-  c.appendChild(eas);
-
-  var big = el("div", "big");
-  [["Balance", a.balance, ""], ["Equity", a.equity, ""], ["Floating", a.floating, sign(a.floating)]].forEach(function(x){
-    var d = el("div");
-    d.appendChild(el("div", "k", x[0]));
-    d.appendChild(el("div", "v " + x[2], num(x[1])));
-    big.appendChild(d);
-  });
-  c.appendChild(big);
-
+  // rincian
+  var body = el("div", "body");
   var tb = el("table", "kv");
-  var pf = (a.profit_factor === null || a.profit_factor === undefined) ? "-" : num(a.profit_factor);
-  var wr = a.trades > 0 ? " · menang " + num(a.wins / a.trades * 100, 0) + "%" : "";
-  kvRow(tb, "Profit factor", pf, (a.profit_factor >= 1) ? "up" : (a.profit_factor !== null && a.profit_factor !== undefined ? "down" : ""));
-  kvRow(tb, "Trade tertutup", (a.trades || 0) + wr);
-  kvRow(tb, "Profit bersih", num(a.net_profit), sign(a.net_profit));
+  kvRow(tb, "EA", (a.eas && a.eas.length) ? a.eas.join(", ") : "-", "warn");
   kvRow(tb, "DD maks (balance)", num(a.dd_bal) + "  (" + num(a.dd_bal_pct, 1) + "%)", Number(a.dd_bal) > 0 ? "down" : "");
   kvRow(tb, "DD maks (equity)", num(a.dd_eq) + "  (" + num(a.dd_eq_pct, 1) + "%)", Number(a.dd_eq) > 0 ? "down" : "");
-  kvRow(tb, "Depo", num(a.deposit));
-  kvRow(tb, "WD", num(a.withdraw));
-  if(Number(a.credit) !== 0 || Number(a.credit_now) !== 0) kvRow(tb, "Credit/bonus", num(a.credit_now));
-  var ml = Number(a.margin) > 0 ? num(a.margin_level, 0) + "%" : "-";
-  kvRow(tb, "Margin level", ml);
-  c.appendChild(tb);
+  var hasPf = !(a.profit_factor === null || a.profit_factor === undefined);
+  kvRow(tb, "Profit factor", hasPf ? num(a.profit_factor) : "-", hasPf ? (a.profit_factor >= 1 ? "up" : "down") : "");
+  var wr = a.trades > 0 ? " · menang " + num(a.wins / a.trades * 100, 0) + "%" : "";
+  kvRow(tb, "Trade tertutup", (a.trades || 0) + wr);
+  kvRow(tb, "Profit bersih", num(a.net_profit), sign(a.net_profit));
+  kvRow(tb, "Margin level", Number(a.margin) > 0 ? num(a.margin_level, 0) + "%" : "-");
+  var srv = [a.server, a.login ? "#" + a.login : ""].filter(Boolean).join(" · ");
+  if(srv) kvRow(tb, "Server", srv);
+  body.appendChild(tb);
 
   var pos = a.positions || [];
-  var det = el("details");
-  det.appendChild(el("summary", "", "Posisi terbuka: " + pos.length + (a.pending ? "  ·  pending: " + a.pending : "")));
+  body.appendChild(el("div", "ptitle", "Posisi terbuka: " + pos.length + "  ·  Pending: " + (a.pending || 0)));
   if(pos.length){
     var wrap = el("div", "scroll");
     var t = el("table", "pos");
@@ -206,36 +271,14 @@ function card(a, nowSec){
       t.appendChild(tr);
     });
     wrap.appendChild(t);
-    det.appendChild(wrap);
+    body.appendChild(wrap);
   }
-  c.appendChild(det);
-
   var foot = el("div", "foot");
-  foot.appendChild(el("span", stale ? "warn" : "", (stale ? "TIDAK ADA KABAR · " : "Update ") + ago(age)));
-  foot.appendChild(el("span", "", "  ·  hitungan sejak " + dateStr(a.since)));
-  c.appendChild(foot);
-  return c;
-}
-
-function totals(list){
-  var by = {};
-  list.forEach(function(a){
-    var k = a.currency || "?";
-    if(!by[k]) by[k] = { n: 0, bal: 0, eq: 0, fl: 0 };
-    by[k].n++; by[k].bal += Number(a.balance) || 0; by[k].eq += Number(a.equity) || 0; by[k].fl += Number(a.floating) || 0;
-  });
-  var box = document.getElementById("totals");
-  box.textContent = "";
-  Object.keys(by).sort().forEach(function(k){
-    var d = el("div", "tot");
-    d.appendChild(el("h3", "", "Total " + k + " · " + by[k].n + " akun"));
-    var tb = el("table", "kv");
-    kvRow(tb, "Balance", num(by[k].bal));
-    kvRow(tb, "Equity", num(by[k].eq));
-    kvRow(tb, "Floating", num(by[k].fl), sign(by[k].fl));
-    d.appendChild(tb);
-    box.appendChild(d);
-  });
+  foot.appendChild(el("span", stale ? "warn" : "", "Update " + ago(age)));
+  foot.appendChild(el("span", "", "  ·  DD dan profit factor dihitung sejak " + dateStr(a.since)));
+  body.appendChild(foot);
+  det.appendChild(body);
+  return det;
 }
 
 async function load(){
@@ -249,16 +292,20 @@ async function load(){
   try{
     var lf = await listFiles(t);
     var data = (await Promise.all(lf.names.map(function(n){ return getOne(t, n); }))).filter(Boolean);
-    data.sort(function(a, b){ return String(a.label || "").localeCompare(String(b.label || "")); });
+    data.sort(function(a, b){
+      var d = (isDemo(a) ? 1 : 0) - (isDemo(b) ? 1 : 0);
+      return d !== 0 ? d : String(a.label || "").localeCompare(String(b.label || ""));
+    });
     var nowSec = Date.now() / 1000;
-    var grid = document.getElementById("grid");
-    grid.textContent = "";
-    data.forEach(function(a){ grid.appendChild(card(a, nowSec)); });
-    totals(data);
+    var list = document.getElementById("list");
+    list.textContent = "";
+    data.forEach(function(a){ list.appendChild(account(a, nowSec)); });
+    if(data.length) general(data, nowSec);
+    document.getElementById("listhead").textContent = data.length ? "Daftar akun — ketuk satu baris untuk melihat rincian" : "";
     msg.hidden = data.length > 0 && !lf.note;
     msg.textContent = data.length ? lf.note : "Belum ada data. Pasang MJ_MONITOR di terminal dan tunggu kiriman pertama.";
     meta.textContent = data.length + " akun · dimuat " + new Date().toLocaleTimeString("id-ID") +
-                       " · muat ulang tiap " + CFG.refreshSec + " detik · " + t.u + "/" + t.r;
+                       " · muat ulang tiap " + CFG.refreshSec + " detik";
   }catch(e){
     msg.hidden = false;
     msg.textContent = "Gagal memuat daftar akun (" + e.message + "). Cek nama repository dan branch '" + t.b + "'.";
